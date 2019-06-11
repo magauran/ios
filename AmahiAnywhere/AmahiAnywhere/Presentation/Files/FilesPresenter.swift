@@ -101,6 +101,8 @@ internal class FilesPresenter: BasePresenter {
         let type = file.mimeType
         AmahiLogger.log(": Matched type is (type), FILE MIMETYPE \(file.mime_type ?? "")")
 
+        AmahiLogger.log(": Matched type is \(type) , File MIMETYPE \(file.mime_type ?? "")")
+
         switch type {
             
         case .image:
@@ -109,7 +111,7 @@ internal class FilesPresenter: BasePresenter {
             controller.dynamicBackground = true
             self.view?.present(controller)
             
-        case .video, .flac:
+        case .video, .flacMedia:
             // TODO: open VideoPlayer and play the file
             
             guard let url = ServerApi.shared!.getFileUri(file) else {

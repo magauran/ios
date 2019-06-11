@@ -7,7 +7,7 @@
 //
 
 enum MimeType: Int {
-    case undefined = 1, archive, audio, code, sharedFile, document, directory, image, presentation, spreadsheet, video, subtitle
+    case undefined = 1, archive, audio, code, sharedFile, document, directory, image, presentation, spreadsheet, video, subtitle, flacMedia
 
     init(_ mime: String?) {
         if let mime = mime {
@@ -19,6 +19,10 @@ enum MimeType: Int {
 
     private static func matchCategory(_ mime: String) -> MimeType {
         let type = mime.split(separator: "/")[0]
+
+        if isFlacMedia(mime) {
+            return .flacMedia
+        }
 
         switch type {
         case "audio":
@@ -47,7 +51,8 @@ enum MimeType: Int {
         types.updateValue(.archive, forKey: "application/x-rar-compressed")
 
         types.updateValue(.audio, forKey: "application/ogg")
-        types.updateValue(.audio, forKey: "application/x-flac")
+        // breaking out flac on its own type because of https://github.com/amahi/ios/issues/172
+        types.updateValue(.flacMedia, forKey: "application/x-flac")
 
         types.updateValue(.code, forKey: "text/css")
         types.updateValue(.code, forKey: "text/html")
@@ -89,4 +94,13 @@ enum MimeType: Int {
 
         return types
     }()
+
+    private static func isFlacMedia(_ mime: String) -> Bool {
+        let mimeComponents = mime.split(separator: "/")
+        if mimeComponents.indices.contains(1) {
+            let fileExtensionType = mime.split(separator: "/")[1]
+            return fileExtensionType == "flac"
+        }
+        return false
+    }
 }
